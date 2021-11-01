@@ -8,6 +8,7 @@
 }
 
 .select-character-container .character-grid {
+  padding: 5%;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
