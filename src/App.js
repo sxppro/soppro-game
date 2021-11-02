@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
-import { ChakraProvider, Button } from "@chakra-ui/react";
+import { ChakraProvider, Button, Image, Flex, Heading } from "@chakra-ui/react";
 import { ethers } from 'ethers';
 import SelectCharacter from './Components/SelectCharacter';
 import { CONTRACT_ADDRESS, transformCharData }from './constants';
 import sopproGame from './utils/SopproGame.json';
+import Arena from './Components/Arena';
+import LoadingIndicator from './Components/LoadingIndicator';
 
 // Constants
 const TWITTER_HANDLE = 'Sopproo';
@@ -15,6 +17,7 @@ const App = () => {
   const [hasMetaMask, setMetaMask] = useState(false);
   const [currAccount, setCurrentAccount] = useState("");
   const [currChar, setCurrentChar] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Determine user account
   const checkWalletConnection = () => {
@@ -89,6 +92,8 @@ const App = () => {
         // Handle no character
         alert("Error: no character exists");
       }
+
+      setIsLoading(false);
     }
 
     if (currAccount) {
@@ -98,8 +103,17 @@ const App = () => {
 
   // Determine what content to render
   const renderContent = () => {
+    if (isLoading) {
+      return <LoadingIndicator />
+    }
     if (!currAccount) {
-      return (
+      return <>
+        <Image
+                m="5%"
+                borderRadius="base"
+                src="https://media2.giphy.com/media/FyoaJE2iah7WYeyxWr/giphy.gif?cid=ecf05e47exzaqcbqfjc2v8qbfwvke8z9vky24xc15v4j79p7&rid=giphy.gif&ct=g"
+                alt="Blue gradients flowing"
+              />
         <Button
                 className="walletButton"
                 cursor="pointer"
@@ -121,9 +135,11 @@ const App = () => {
               >
                 Connect Wallet
               </Button>
-      )
+      </>
     } else if (currAccount && !currChar) {
       return <SelectCharacter setCharacter={setCurrentChar} />
+    } else if (currAccount && currChar) {
+      return <Arena characterNFT={currChar} setCharacterNFT={setCurrentChar} />
     }
   }
 
@@ -136,10 +152,6 @@ const App = () => {
             <p className="header gradient-text">⚔️ Soppro Game ⚔️</p>
             <p className="sub-text">Team up to defeat mobs and bosses in an exhilarating new game!</p>
             <div className="connect-wallet-container">
-              <img
-                src="https://media2.giphy.com/media/FyoaJE2iah7WYeyxWr/giphy.gif?cid=ecf05e47exzaqcbqfjc2v8qbfwvke8z9vky24xc15v4j79p7&rid=giphy.gif&ct=g"
-                alt="Checking for moderators"
-              />
               {renderContent()}
             </div>
           </div>
